@@ -1,5 +1,5 @@
-using concertticket_webapp_appserver;
-using concertticket_webapp_appserver.Entities;
+using CAFF_server;
+using CAFF_server.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace concertticket_webapp_appserver.DTOs
+namespace CAFF_server.DTOs
 {
     public class UserDTO
     {

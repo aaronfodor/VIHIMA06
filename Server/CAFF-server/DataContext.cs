@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using concertticket_webapp_appserver.Entities;
+using CAFF_server.Entities;
 
-namespace concertticket_webapp_appserver
+namespace CAFF_server
 {
     public class DataContext : IdentityDbContext
     {

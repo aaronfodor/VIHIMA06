@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using concertticket_webapp_appserver.DTOs;
-using concertticket_webapp_appserver.Entities;
+using CAFF_server.DTOs;
+using CAFF_server.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace concertticket_webapp_appserver
+namespace CAFF_server
 {
     public class AutoMapperProfile : Profile
     {

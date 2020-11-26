@@ -1,12 +1,9 @@
-﻿using concertticket_webapp_appserver;
-using concertticket_webapp_appserver.Entities;
+﻿using CAFF_server.Entities;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace concertticket_webapp_appserver
+namespace CAFF_server
 {
     public static class DbInitializer
     {
@@ -18,8 +15,8 @@ namespace concertticket_webapp_appserver
             {
                 var roles = new IdentityRole[]
                 {
-                    new IdentityRole{ Name = "Admin"},
-                    new IdentityRole{ Name = "User"},
+                    new IdentityRole{ Name = Role.ADMIN},
+                    new IdentityRole{ Name = Role.API_USER},
                 };
                 foreach (IdentityRole r in roles)
                 {
@@ -31,11 +28,12 @@ namespace concertticket_webapp_appserver
             {
                 var user = new User { UserName = "user" };
                 await userManager.CreateAsync(user, "default");
-                await userManager.AddToRoleAsync(user, "User");
+                await userManager.AddToRoleAsync(user, Role.API_USER);
 
                 var admin = new Administrator { UserName = "admin" };
                 await userManager.CreateAsync(admin, "default");
-                await userManager.AddToRoleAsync(admin, "Admin");
+                await userManager.AddToRoleAsync(user, Role.API_USER);
+                await userManager.AddToRoleAsync(admin, Role.ADMIN);
             }
         }
     }

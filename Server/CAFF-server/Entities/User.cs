@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace concertticket_webapp_appserver.Entities
+namespace CAFF_server.Entities
 {
     public class User: IdentityUser
     {
