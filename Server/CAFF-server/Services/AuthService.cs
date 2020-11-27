@@ -10,6 +10,5 @@ namespace CAFF_server.Services
 {
     public class AuthService
     {
-
     }
 }

@@ -33,21 +33,22 @@ namespace CAFF_server.Services
         private SignInManager<User> _signInManager;
         private IConfiguration _configuration;
         private IMapper _mapper;
-        private readonly ILogger<UserService> _logger;
 
-        public UserService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, IMapper mapper, ILogger<UserService> logger)
+        public UserService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _mapper = mapper;
-            _logger = logger;
         }
 
         public async Task<IdentityResult> CreateUser(UserDTO userDTO)
         {
             var userWithSameEmail = await _userManager.FindByEmailAsync(userDTO.Email);
-            if (userWithSameEmail != null) throw new Exception("The provided email is already occupied");
+            if (userWithSameEmail != null)
+            {
+                throw new Exception("The provided email is already occupied");
+            }
 
             var userWithSameName = await _userManager.FindByNameAsync(userDTO.UserName);
             if (userWithSameName != null) throw new Exception("The provided name is already occupied");
@@ -60,7 +61,7 @@ namespace CAFF_server.Services
 
         public async Task<IdentityResult> RegisterUser(UserDTO userDTO)
         {
-            userDTO.Role = Role.API_USER + ", " + Role.SELF_MODIFICATION;
+            userDTO.Role = Role.API_USER + "," + Role.SELF_MODIFICATION;
             return await CreateUser(userDTO);
         }
 

@@ -23,7 +23,7 @@ namespace CAFF_server.Controllers
             _mapper = mapper;
         }
 
-        //[Authorize(Roles = Role.ADMIN)]
+        [Authorize(Roles = Role.ADMIN)]
         [HttpPost()]
         public async Task<IActionResult> Create([FromBody] UserDTO userDTO)
         {
@@ -42,7 +42,7 @@ namespace CAFF_server.Controllers
             }
         }
 
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
@@ -60,7 +60,7 @@ namespace CAFF_server.Controllers
             }
         }
 
-        //[Authorize(Roles = Role.ADMIN)]
+        [Authorize(Roles = Role.ADMIN)]
         [HttpPut()]
         public async Task<IActionResult> Update([FromBody] UserDTO userDTO)
         {
@@ -78,7 +78,7 @@ namespace CAFF_server.Controllers
             }
         }
 
-        //[Authorize(Roles = Role.SELF_MODIFICATION)]
+        [Authorize(Roles = Role.SELF_MODIFICATION)]
         [HttpPut("self")]
         public async Task<IActionResult> UpdateSelf([FromBody] UserDTO userDTO)
         {
@@ -99,7 +99,7 @@ namespace CAFF_server.Controllers
             }
         }
 
-        //[Authorize(Roles = Role.ADMIN)]
+        [Authorize(Roles = Role.ADMIN)]
         [HttpDelete("{email}")]
         public async Task<IActionResult> DeleteUserByEmail(string email)
         {
@@ -117,7 +117,7 @@ namespace CAFF_server.Controllers
             }
         }
 
-        //[Authorize(Roles = Role.SELF_MODIFICATION)]
+        [Authorize(Roles = Role.SELF_MODIFICATION)]
         [HttpDelete("self")]
         public async Task<IActionResult> DeleteSelf()
         {
@@ -138,7 +138,7 @@ namespace CAFF_server.Controllers
             }
         }
 
-        //[Authorize(Roles = Role.ADMIN)]
+        [Authorize(Roles = Role.ADMIN)]
         [HttpGet("{email}")]
         public async Task<UserDTO> GetUserByEmail(string email)
         {
@@ -154,7 +154,7 @@ namespace CAFF_server.Controllers
             }
         }
 
-        //[Authorize(Roles = Role.ADMIN)]
+        [Authorize(Roles = Role.ADMIN)]
         [HttpGet("all")]
         public async Task<List<UserDTO>> GetUsers()
         {
@@ -186,7 +186,7 @@ namespace CAFF_server.Controllers
             }
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
