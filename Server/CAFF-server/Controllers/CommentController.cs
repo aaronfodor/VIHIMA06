@@ -20,25 +20,36 @@ namespace CAFF_server.Controllers
     {
         private ICommentService _commentService;
         private IMapper _mapper;
-        public CommentController(ICommentService commentService, IMapper mapper)
+        private ILoggerService _loggerService;
+        public CommentController(ICommentService commentService, IMapper mapper, ILoggerService loggerService)
         {
             _commentService = commentService;
             _mapper = mapper;
+            _loggerService = loggerService;
         }
 
         [HttpGet("all/{caffid}")]
         public IActionResult GetAllComments(int caffid)
         {
+            string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
                 var comments = _commentService.GetAllComment(caffid);
-                if (comments == null) return BadRequest();
-                else return Ok(_mapper.Map<IEnumerable<CommentDTO>>(comments));
+                if (comments == null)
+                {
+                    _loggerService.Error("Comments not found", userid);
+                    return NotFound();
+                }
+                else
+                {
+                    _loggerService.Info("Comments retrieved", userid);
+                    return Ok(_mapper.Map<IEnumerable<CommentDTO>>(comments));
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -49,14 +60,21 @@ namespace CAFF_server.Controllers
             try
             {
                 var com = _commentService.AddComment(_mapper.Map<Comment>(commentDTO), caffid, userid);
-                if (com == null) return BadRequest();
-
-                return Ok(_mapper.Map<CommentDTO>(com));
+                if (com == null)
+                {
+                    _loggerService.Error("Comment could not be added", userid);
+                    return BadRequest();
+                }
+                else
+                {
+                    _loggerService.Info("Comment added", userid);
+                    return Ok(_mapper.Map<CommentDTO>(com));
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -64,15 +82,17 @@ namespace CAFF_server.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteComment(int id)
         {
+            string adminid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
                 _commentService.DeleteComment(id);
+                _loggerService.Info("Comment deleted", adminid);
                 return Ok();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, adminid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 

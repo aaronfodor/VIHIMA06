@@ -19,10 +19,12 @@ namespace CAFF_server.Controllers
     {
         private IUserService _userService;
         private IMapper _mapper;
-        public UserController(IUserService userService, IMapper mapper)
+        private ILoggerService _loggerService;
+        public UserController(IUserService userService, IMapper mapper, ILoggerService loggerService)
         {
             _userService = userService;
             _mapper = mapper;
+            _loggerService = loggerService;
         }
 
         [HttpPost("register")]
@@ -33,14 +35,20 @@ namespace CAFF_server.Controllers
             try
             {
                 var result = await _userService.CreateUser(user, userDTO.Password);
-                if (!result.Succeeded) return BadRequest(result);
-
-                return CreatedAtAction("Register", result);
+                if (!result.Succeeded) {
+                    _loggerService.Error(result.Errors.ToString(), null);
+                    return BadRequest(result); 
+                }
+                else
+                {
+                    _loggerService.Info("Successful registration", user.Id);
+                    return Ok();
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -50,13 +58,21 @@ namespace CAFF_server.Controllers
             try
             {
                 var user = await _userService.Login(userDTO.UserName, userDTO.Password);
-                if (user == null) return NotFound();
-                return Ok(user);
+                if (user == null) 
+                {
+                    _loggerService.Error("User not found", null);
+                    return NotFound(); 
+                }
+                else
+                {
+                    _loggerService.Info("Login successful", user.Id);
+                    return Ok(user);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -64,15 +80,17 @@ namespace CAFF_server.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
+            string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
                 await _userService.Logout();
+                _loggerService.Info("Logout successful", userid);
                 return Ok();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -86,13 +104,21 @@ namespace CAFF_server.Controllers
             {
                 var user = await _userService.GetUser(userid);
 
-                if (user == null) return BadRequest();
-                else return Ok(user);
+                if (user == null)
+                {
+                    _loggerService.Error("User not found", userid);
+                    return BadRequest();
+                }
+                else
+                {
+                    _loggerService.Info("Successful user retrieval", userid);
+                    return Ok(user);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -107,13 +133,21 @@ namespace CAFF_server.Controllers
             try
             {
                 var result = await _userService.UpdateUser(user);
-                if (!result.Succeeded) return BadRequest(result);
-                return Ok();
+                if (!result.Succeeded)
+                {
+                    _loggerService.Error(result.Errors.ToString(), userid);
+                    return BadRequest(result);
+                }
+                else
+                {
+                    _loggerService.Info("Profile edit successful", userid);
+                    return Ok();
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -121,16 +155,25 @@ namespace CAFF_server.Controllers
         [HttpPut("editpassword")]
         public async Task<IActionResult> EditPassword([FromBody] JObject data)
         {
+            var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
-                var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                await _userService.UpdateUserPassword(userid, data["oldpassword"].ToString(), data["newpassword"].ToString());
-                return Ok();
+                var result = await _userService.UpdateUserPassword(userid, data["oldpassword"].ToString(), data["newpassword"].ToString());
+                if(!result.Succeeded)
+                {
+                    _loggerService.Error(result.Errors.ToString(), userid);
+                    return BadRequest();
+                }
+                else
+                {
+                    _loggerService.Info("Password edit successful", userid);
+                    return Ok();
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
         

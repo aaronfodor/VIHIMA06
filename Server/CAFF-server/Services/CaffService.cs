@@ -11,7 +11,7 @@ namespace CAFF_server.Services
 {
     public interface ICaffService
     {
-        void AddCaff(string path, string originalName, string userid);
+        int AddCaff(string path, string originalName, string userid);
         IEnumerable<CAFF> GetAllCaff();
         IEnumerable<CAFF> GetCaffSearch(string search);
         CAFF GetCaff(int id);
@@ -29,28 +29,32 @@ namespace CAFF_server.Services
         [DllImport("caff_parser.dll", EntryPoint = "parse", CallingConvention = CallingConvention.Cdecl)]
         static extern int parse(string path);
 
-        public void AddCaff(string path, string originalName, string userid)
+        public int AddCaff(string path, string originalName, string userid)
         {
             //parse("C:\\directoryname\\caffname.caff");
             try
             {
-                parse(path);
-                var filename = Path.GetFileName(path);
-                var user = _context.User.Find(userid);
-                var caff = new CAFF()
+                var returnCode = parse(path);
+                if (returnCode == 0)
                 {
-                    StoredFileName = filename.Substring(0, filename.Length - 5),
-                    OriginalFileName = originalName,
-                    Uploader = user,
-                    UploadTimestamp = DateTime.Now,
-                    Comments = new List<Comment>()
-                };
-                _context.CAFFs.Add(caff);
-                _context.SaveChanges();
+                    var filename = Path.GetFileName(path);
+                    var user = _context.User.Find(userid);
+                    var caff = new CAFF()
+                    {
+                        StoredFileName = filename.Substring(0, filename.Length - 5),
+                        OriginalFileName = originalName,
+                        Uploader = user,
+                        UploadTimestamp = DateTime.Now,
+                        Comments = new List<Comment>()
+                    };
+                    _context.CAFFs.Add(caff);
+                    _context.SaveChanges();
+                }
+                return returnCode;
             }
-            catch (Exception argExc)
+            catch
             {
-                Console.WriteLine(argExc);
+                throw;
             }
         }
 

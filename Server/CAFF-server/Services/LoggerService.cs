@@ -1,44 +1,51 @@
 ﻿
+using CAFF_server.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace CAFF_server
 {
-    public class LoggerService
+    public interface ILoggerService
     {
-        private readonly string FileName = "Logs/log.txt";
-        private readonly string ComponentName = "";
+        void Info(string message, string userid);
+        void Error(string message, string userid);
+        void Warning(string message, string userid);
+        void Debug(string message, string userid);
+    }
+    public class LoggerService : ILoggerService
+    {
+        private DataContext _context;
 
-        public void Info(string message)
+        public LoggerService(DataContext context)
         {
-            Log("Info", message);
+            _context = context;
         }
 
-        public void Debug(string message)
+        public void Info(string message, string userid)
         {
-            Log("Debug", message);
+            Log("Info", message, userid);
         }
 
-        public void Warning(string message)
+        public void Debug(string message, string userid)
         {
-            Log("Warning", message);
+            Log("Debug", message, userid);
         }
 
-        public void Error(string message)
+        public void Warning(string message, string userid)
         {
-            Log("Error", message);
+            Log("Warning", message, userid);
         }
 
-        private void Log(string level, string message)
+        public void Error(string message, string userid)
         {
-            string LogItem = $"{DateTime.UtcNow} [{ComponentName}][{level}]: {message}";
+            Log("Error", message, userid);
+        }
 
-            Console.WriteLine(LogItem);
-            using (StreamWriter sw = File.AppendText(FileName))
-            {
-                sw.WriteLine(LogItem);
-            }
+        private void Log(string level, string message, string userid)
+        {
+            _context.Add(new Log() { Level = level, TimeStamp = DateTime.Now, Message = message, UserId = userid});
+            _context.SaveChanges();
         }
 
     }

@@ -15,5 +15,6 @@ namespace CAFF_server
         public DbSet<User> User { get; set; }
         public DbSet<CAFF> CAFFs { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Log> Logs { get; set; }
     }
 }

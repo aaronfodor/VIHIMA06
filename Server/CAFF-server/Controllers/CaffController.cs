@@ -16,97 +16,141 @@ namespace CAFF_server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class CaffController : ControllerBase
     {
         private ICaffService _caffService;
         private IMapper _mapper;
         private IConfiguration _config;
-        public CaffController(ICaffService caffService, IMapper mapper, IConfiguration configuration)
+        private ILoggerService _loggerService;
+        public CaffController(ICaffService caffService, IMapper mapper, IConfiguration configuration, ILoggerService loggerService)
         {
             _caffService = caffService;
             _mapper = mapper;
             _config = configuration;
+            _loggerService = loggerService;
         }
 
         [HttpGet("all")]
         public IActionResult GetAllCaff()
         {
+            string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
                 var caffs = _mapper.Map<IEnumerable<CAFFDTO>>(_caffService.GetAllCaff());
-                if (caffs == null) return BadRequest();
-
-                foreach(CAFFDTO caff in caffs)
+                if (caffs == null)
                 {
-                    var path = Path.Combine(_config["StoredFilesPath"], caff.StoredFileName + ".bmp");
-                    caff.Preview = System.IO.File.ReadAllBytes(path);
-                    caff.StoredFileName = null;
+                    _loggerService.Error("No caffs found", userid);
+                    return NotFound();
                 }
-                return Ok(caffs);
+                else
+                {
+                    foreach (CAFFDTO caff in caffs)
+                    {
+                        var path = Path.Combine(_config["StoredFilesPath"], caff.StoredFileName + ".bmp");
+                        caff.Preview = System.IO.File.ReadAllBytes(path);
+                        caff.StoredFileName = null;
+                    }
+                    _loggerService.Info("All caffs retrieved", userid);
+
+                    return Ok(caffs);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpGet("search")]
         public IActionResult GetCaffSearch([FromBody] string filename)
         {
+            string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
-                var caffs = _caffService.GetCaffSearch(filename);
-                if (caffs == null) return BadRequest();
-                else return Ok(caffs);
+                var caffs = _mapper.Map<IEnumerable<CAFFDTO>>(_caffService.GetCaffSearch(filename));
+                if (caffs == null)
+                {
+                    _loggerService.Error("No caffs found", userid);
+                    return NotFound();
+                }
+                else
+                {
+                    foreach (CAFFDTO caff in caffs)
+                    {
+                        var path = Path.Combine(_config["StoredFilesPath"], caff.StoredFileName + ".bmp");
+                        caff.Preview = System.IO.File.ReadAllBytes(path);
+                        caff.StoredFileName = null;
+                    }
+                    _loggerService.Info("Caffs retrieved", userid);
+
+                    return Ok(caffs);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
-        [Authorize]
+        
         [HttpGet("{id}")]
         public IActionResult GetCaff(int id)
         {
+            string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
                 var caff = _mapper.Map<CAFFDTO>(_caffService.GetCaff(id));
-                if (caff == null) return BadRequest();
+                if (caff == null)
+                {
+                    _loggerService.Error("No caff found", userid);
+                    return NotFound();
+                }
+                else
+                {
+                    var path = Path.Combine(_config["StoredFilesPath"], caff.StoredFileName + ".bmp");
+                    caff.Preview = System.IO.File.ReadAllBytes(path);
+                    caff.StoredFileName = null;
+                    _loggerService.Info("All caffs retrieved", userid);
 
-                var path = Path.Combine(_config["StoredFilesPath"], caff.StoredFileName + ".bmp");
-                caff.Preview = System.IO.File.ReadAllBytes(path);
-                caff.StoredFileName = null;
-                return Ok(caff);
+                    return Ok(caff);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpGet("{id}/download")]
         public IActionResult DownloadCaff(int id)
         {
+            string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
                 var caff = _caffService.GetCaff(id);
-                if (caff == null) return BadRequest();
+                if (caff == null)
+                {
+                    _loggerService.Error("No caff found", userid);
+                    return NotFound();
+                }
+                else
+                {
+                    var path = Path.Combine(_config["StoredFilesPath"], caff.StoredFileName + ".caff");
+                    byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+                    var file = File(fileBytes, "multipart/encrypted", caff.OriginalFileName);
 
-                var path = Path.Combine(_config["StoredFilesPath"], caff.StoredFileName + ".caff");
-
-                byte[] fileBytes = System.IO.File.ReadAllBytes(path);
-
-                var file = File(fileBytes, "multipart/encrypted", caff.OriginalFileName);
-                return Ok(file);
+                    _loggerService.Info("File downloaded", userid);
+                    return Ok(file);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -127,15 +171,16 @@ namespace CAFF_server.Controllers
                         await file.File.CopyToAsync(stream);
                     }
 
-                    _caffService.AddCaff(Path.GetFullPath(filePath), file.File.FileName, userid);
+                    var resultCode = _caffService.AddCaff(Path.GetFullPath(filePath), file.File.FileName, userid);
+                    if (resultCode == 0) { _loggerService.Info("Caff file saved", userid); return Ok(); }
+                    else if (resultCode == 2) { _loggerService.Error("Hiba a CAFF fájl megnyitása közben", userid); return StatusCode(StatusCodes.Status500InternalServerError); }
+                    else { _loggerService.Error("Hiba parsolás közben: hibás fájl", userid); return BadRequest("Hiba parsolás közben: hibás fájl"); }
                 }
-
-                return Ok();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, userid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -143,16 +188,17 @@ namespace CAFF_server.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteCaff(int id)
         {
+            string adminid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
                 _caffService.DeleteCaff(id);
-
+                _loggerService.Info("Caff deleted successfully", adminid);
                 return Ok();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                _loggerService.Debug(ex.Message, adminid);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 

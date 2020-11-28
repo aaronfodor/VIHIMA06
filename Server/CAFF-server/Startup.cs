@@ -72,6 +72,7 @@ namespace CAFF_server
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<ICaffService, CaffService>();
             services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<ILoggerService, LoggerService>();
 
             services.AddSwaggerGen(c =>
             {
