@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300;700&display=swap" rel="stylesheet">
+	<title></title>
+	<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/images/favicon.png"/>
+	<meta name="theme-color" content="#bca490" />
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/normalize.css">	
+	<link rel="stylesheet" href="css/jquery-ui.css">
+    <link rel="stylesheet" href="css/style.css">
+	<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="js/jquery-ui.js"></script>		
+    <script type="text/javascript" src="js/legacy.js"></script>
+
+</head>
+
+<script>
+
+var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyOWRkMWQ4Mi01NDU3LTQwMGYtYjFkNy02MWJiNTRkMmFiNjMiLCJyb2xlIjoiYXBpX3VzZXIiLCJuYmYiOjE2MDY1MDE2MDYsImV4cCI6MTYwNjU4ODAwNiwiaWF0IjoxNjA2NTAxNjA2fQ.eUArVKE8S3FY8RvhVRhCaiREoS-qMm7RWVCz5_QOemQ";
+
+/*
+        $.ajax({
+                type: "POST",
+                url: "https://845644db5a0e.ngrok.io/user/logout",
+                contentType: "application/json",
+                beforeSend: function (xhr) {   //Include the bearer token in header
+                    xhr.setRequestHeader("Authorization", 'Bearer '+ token);
+                },
+                //data: data,
+                timeout: 600000,
+                processData: false,
+                success: function(data) {
+                    console.log(data);
+
+                },
+                error: function(e) {
+                    console.log(e);
+                    var result = JSON.parse(e.responseText);
+                    
+                }
+            });*/
+
+            $.ajax({
+                type: "GET",
+                url: "https://845644db5a0e.ngrok.io/user",
+                contentType: "application/json",
+                beforeSend: function (xhr) {   //Include the bearer token in header
+                    xhr.setRequestHeader("Authorization", 'Bearer '+ token);
+                },
+                //data: data,
+                timeout: 600000,
+                processData: false,
+                success: function(data) {
+                    console.log(data);
+
+                },
+                error: function(e) {
+                    console.log(e);
+                    var result = JSON.parse(e.responseText);
+                    
+                }
+            });
+    </script>

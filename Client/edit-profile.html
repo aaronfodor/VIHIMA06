@@ -1,0 +1,41 @@
+<div id="header-content"></div>
+<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+<script> 
+    $(function(){
+      $("#header-content").load("header.html"); 
+    });
+    </script> 
+        <div class="content">
+
+
+            <div class="tab">
+                <button id="tablinks-profile" class="tablinks" onclick="openTab('profile')">Profile</button><button id="tablinks-password" class="tablinks" onclick="openTab('password')">Password</button>
+              </div>
+              
+              <!-- Tab content -->
+              <div id="profile" class="tabcontent">
+                <input class="login" id="profile_email" name="email" value="" placeholder="email" /><br />
+                <input class="login" id="profile_name" name="password" type="text" value="" placeholder="name" /><br />
+                <input class="login" id="profile_username" name="username" type="username" value="" placeholder="username" /><br />
+                <br>
+                <button onclick="editProfile();" id="profile_button">SAVE</button><br />
+              </div>
+              
+              <div id="password" class="tabcontent">
+                <input class="login" id="password_old" name="password" type="password" value="" placeholder="password" /><br />
+                <input class="login" id="password1" name="password" type="password" value="" placeholder="password" /><br />
+                <input class="login" id="password2" name="password" type="password" value="" placeholder="password" /><br />
+                <br>
+                <button onclick="editPassword();" id="password_button">SAVE</button><br />
+              </div>
+              
+
+
+
+
+</div>
+<script type="text/javascript" src="js/connection.js"></script>
+
+<script type="text/javascript" src="js/edit-profile.js"></script>
+
+</body>
