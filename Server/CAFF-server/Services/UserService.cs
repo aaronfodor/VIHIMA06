@@ -18,13 +18,11 @@ namespace CAFF_server.Services
 
     public interface IUserService
     {
-        Task<IdentityResult> RegisterUser(UserDTO userDTO);
-        Task<IdentityResult> CreateUser(UserDTO userDTO);
-        Task<IdentityResult> UpdateUser(UserDTO user);
-        Task<IdentityResult> DeleteUser(string userEmail);
-        Task<UserDTO> GetUserByEmail(string userEmail);
-        Task<List<UserDTO>> GetUsers();
-        Task<string> Login(string userName, string password);
+        Task<IdentityResult> CreateUser(User user, string password);
+        Task<UserDTO> GetUser(string userid);
+        Task<IdentityResult> UpdateUser(User user);
+        Task<IdentityResult> UpdateUserPassword(string userid, string oldpassword, string newpassword);
+        Task<UserDTO> Login(string userName, string password);
         Task Logout();
     }
     public class UserService: IUserService
@@ -42,61 +40,31 @@ namespace CAFF_server.Services
             _mapper = mapper;
         }
 
-        public async Task<IdentityResult> CreateUser(UserDTO userDTO)
+        public async Task<IdentityResult> CreateUser(User user, string password)
         {
-            var userWithSameEmail = await _userManager.FindByEmailAsync(userDTO.Email);
-            if (userWithSameEmail != null)
-            {
-                throw new Exception("The provided email is already occupied");
-            }
-
-            var userWithSameName = await _userManager.FindByNameAsync(userDTO.UserName);
-            if (userWithSameName != null) throw new Exception("The provided name is already occupied");
-
-            User newUser = _mapper.Map<User>(new UserDTO { Email = userDTO.Email, UserName = userDTO.UserName, Password = userDTO.Password, Role = userDTO.Role});
-            IdentityResult result = await _userManager.CreateAsync(newUser, userDTO.Password);
-
+            var result = await _userManager.CreateAsync(user, password);
+            await _userManager.AddToRoleAsync(user, "User");
             return result;
         }
 
-        public async Task<IdentityResult> RegisterUser(UserDTO userDTO)
+        public async Task<IdentityResult> UpdateUser(User user)
         {
-            userDTO.Role = Role.API_USER + "," + Role.SELF_MODIFICATION;
-            return await CreateUser(userDTO);
-        }
-
-        public async Task<IdentityResult> UpdateUser(UserDTO userDTO)
-        {
-            var updatedUser = _mapper.Map<User>(new UserDTO { Email = userDTO.Email, UserName = userDTO.UserName, Password = userDTO.Password, Role = userDTO.Role } );
-            updatedUser.ConcurrencyStamp = DateTime.UtcNow.ToString();
-            var result = await _userManager.UpdateAsync(updatedUser);
+            var userindb = await _userManager.FindByIdAsync(user.Id);
+            if (user.Email != null) userindb.Email = user.Email;
+            if (user.Name != null) userindb.Name = user.Name;
+            if (user.UserName != null) userindb.UserName = user.UserName;
+            var result = await _userManager.UpdateAsync(userindb);
             return result;
         }
 
-        public async Task<IdentityResult> DeleteUser(string userEmail)
+        public async Task<IdentityResult> UpdateUserPassword(string userid, string oldpassword, string newpassword)
         {
-            var toDelete = await _userManager.FindByEmailAsync(userEmail);
-            if(toDelete == null) throw new Exception("User not found by email");
-            var result = await _userManager.DeleteAsync(toDelete);
+            var user = await _userManager.FindByIdAsync(userid);
+            var result = await _userManager.ChangePasswordAsync(user, oldpassword, newpassword);
             return result;
         }
 
-        public async Task<UserDTO> GetUserByEmail(string userEmail)
-        {
-            var user = await _userManager.Users.FirstAsync(it => it.Email == userEmail);
-            if (user == null) throw new Exception("User not found by email");
-            var userDTO = _mapper.Map<UserDTO>(user);
-            return userDTO;
-        }
-
-        public async Task<List<UserDTO>> GetUsers()
-        {
-            var users = await _userManager.Users.ToListAsync();
-            var usersDTO = _mapper.Map<List<UserDTO>>(users);
-            return usersDTO;
-        }
-
-        public async Task<string> Login(string userName, string password)
+        public async Task<UserDTO> Login(string userName, string password)
         {
             var result = await _signInManager.PasswordSignInAsync(userName, password, true, false);
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -109,7 +77,7 @@ namespace CAFF_server.Services
                 var key = Encoding.UTF8.GetBytes(_configuration["Key"]);
 
                 List<Claim> claims = new List<Claim>();
-                claims.Add(new Claim(ClaimTypes.Name, user.Id.ToString()));
+                claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
                 foreach (string role in roles)
                 {
@@ -123,7 +91,11 @@ namespace CAFF_server.Services
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
-                return tokenHandler.WriteToken(token);
+
+                var userDTO = _mapper.Map<UserDTO>(user);
+                userDTO.Token = tokenHandler.WriteToken(token);
+                userDTO.Role = roles[0];
+                return userDTO;
             }
 
             throw new Exception("Invalid credentials");
@@ -133,6 +105,15 @@ namespace CAFF_server.Services
         {
             await _signInManager.SignOutAsync();
             return;
+        }
+
+        public async Task<UserDTO> GetUser(string userid)
+        {
+            var user = await _userManager.FindByIdAsync(userid);
+            var roles = _userManager.GetRolesAsync(user).Result; 
+            var userDTO = _mapper.Map<UserDTO>(user);
+            userDTO.Role = roles[0];
+            return userDTO;
         }
     }
 }

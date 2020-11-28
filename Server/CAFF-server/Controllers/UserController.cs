@@ -4,10 +4,12 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using CAFF_server.DTOs;
+using CAFF_server.Entities;
 using CAFF_server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace CAFF_server.Controllers
 {
@@ -23,32 +25,14 @@ namespace CAFF_server.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(Roles = Role.ADMIN)]
-        [HttpPost()]
-        public async Task<IActionResult> Create([FromBody] UserDTO userDTO)
-        {
-            var identity = User.Identity;
-            try
-            {
-                var result = await _userService.CreateUser(userDTO);
-                if (!result.Succeeded) return BadRequest(result);
-
-                return CreatedAtAction("Create", result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
+            var user = _mapper.Map<User>(userDTO);
+
             try
             {
-                var result = await _userService.RegisterUser(userDTO);
+                var result = await _userService.CreateUser(user, userDTO.Password);
                 if (!result.Succeeded) return BadRequest(result);
 
                 return CreatedAtAction("Register", result);
@@ -57,116 +41,6 @@ namespace CAFF_server.Controllers
             {
                 Console.WriteLine(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [Authorize(Roles = Role.ADMIN)]
-        [HttpPut()]
-        public async Task<IActionResult> Update([FromBody] UserDTO userDTO)
-        {
-            try
-            {
-                var result = await _userService.UpdateUser(userDTO);
-                if (!result.Succeeded) return BadRequest(result);
-
-                return CreatedAtAction("Update", result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [Authorize(Roles = Role.SELF_MODIFICATION)]
-        [HttpPut("self")]
-        public async Task<IActionResult> UpdateSelf([FromBody] UserDTO userDTO)
-        {
-            var userEmail = User.FindFirst(ClaimTypes.Email).Value;
-            if (userEmail != userDTO.Email) return StatusCode(StatusCodes.Status401Unauthorized);
-
-            try
-            {
-                var result = await _userService.UpdateUser(userDTO);
-                if (!result.Succeeded) return BadRequest(result);
-
-                return CreatedAtAction("Update self", result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [Authorize(Roles = Role.ADMIN)]
-        [HttpDelete("{email}")]
-        public async Task<IActionResult> DeleteUserByEmail(string email)
-        {
-            try
-            {
-                var result = await _userService.DeleteUser(email);
-                if (!result.Succeeded) return BadRequest(result);
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [Authorize(Roles = Role.SELF_MODIFICATION)]
-        [HttpDelete("self")]
-        public async Task<IActionResult> DeleteSelf()
-        {
-            var userEmail = User.FindFirst(ClaimTypes.Email).Value;
-            if (userEmail == null) return StatusCode(StatusCodes.Status401Unauthorized);
-
-            try
-            {
-                var result = await _userService.DeleteUser(userEmail);
-                if (!result.Succeeded) return BadRequest(result);
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [Authorize(Roles = Role.ADMIN)]
-        [HttpGet("{email}")]
-        public async Task<UserDTO> GetUserByEmail(string email)
-        {
-            try
-            {
-                var result = await _userService.GetUserByEmail(email);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
-        }
-
-        [Authorize(Roles = Role.ADMIN)]
-        [HttpGet("all")]
-        public async Task<List<UserDTO>> GetUsers()
-        {
-            try
-            {
-                var result = await _userService.GetUsers();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
             }
         }
 
@@ -201,5 +75,64 @@ namespace CAFF_server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetProfile()
+        {
+            string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            try
+            {
+                var user = await _userService.GetUser(userid);
+
+                if (user == null) return BadRequest();
+                else return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> EditProfile([FromBody] UserDTO userDTO)
+        {
+            string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = _mapper.Map<User>(userDTO);
+            user.Id = userid;
+
+            try
+            {
+                var result = await _userService.UpdateUser(user);
+                if (!result.Succeeded) return BadRequest(result);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("editpassword")]
+        public async Task<IActionResult> EditPassword([FromBody] JObject data)
+        {
+            try
+            {
+                var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                await _userService.UpdateUserPassword(userid, data["oldpassword"].ToString(), data["newpassword"].ToString());
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500);
+            }
+        }
+        
     }
 }

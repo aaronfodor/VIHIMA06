@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace CAFF_server.Entities
+namespace CAFF_server.DTOs
 {
     public class CommentDTO
     {
-        public int Id { get; set; }
-        public string UserId { get; set; }
-        public int CAFFId { get; set; }
+        public string Id { get; set; }
+        public string UserName { get; set; }
         public string Text { get; set; }
-        public DateTime TimestampUTC { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }

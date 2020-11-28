@@ -13,7 +13,12 @@ namespace CAFF_server
         public AutoMapperProfile()
         {
             CreateMap<User, UserDTO>();
-            CreateMap<UserDTO, User>();
+            CreateMap<UserDTO, User>()
+                .ForMember(d => d.Id, s => s.Ignore());
+            CreateMap<CAFF, CAFFDTO>();
+            CreateMap<Comment, CommentDTO>()
+                .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.User.UserName));
+            CreateMap<CommentDTO, Comment>();
         }
     }
 }

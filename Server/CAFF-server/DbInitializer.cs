@@ -15,8 +15,8 @@ namespace CAFF_server
             {
                 var roles = new IdentityRole[]
                 {
-                    new IdentityRole{ Name = Role.ADMIN},
-                    new IdentityRole{ Name = Role.API_USER},
+                    new IdentityRole{ Name = "Admin"},
+                    new IdentityRole{ Name = "User"},
                 };
                 foreach (IdentityRole r in roles)
                 {
@@ -26,14 +26,13 @@ namespace CAFF_server
 
             if (!userManager.Users.Any())
             {
-                var user = new User { UserName = "user" };
+                var user = new User { UserName = "user", Email = "user@webshop.ws", Name = "user" };
                 await userManager.CreateAsync(user, "default");
-                await userManager.AddToRoleAsync(user, Role.API_USER);
+                await userManager.AddToRoleAsync(user, "User");
 
-                var admin = new Administrator { UserName = "admin" };
+                var admin = new Administrator { UserName = "admin", Email="admin@webshop.ws", Name="admin" };
                 await userManager.CreateAsync(admin, "default");
-                await userManager.AddToRoleAsync(user, Role.API_USER);
-                await userManager.AddToRoleAsync(admin, Role.ADMIN);
+                await userManager.AddToRoleAsync(admin, "Admin");
             }
         }
     }

@@ -13,5 +13,7 @@ namespace CAFF_server
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         public DbSet<User> User { get; set; }
+        public DbSet<CAFF> CAFFs { get; set; }
+        public DbSet<Comment> Comments { get; set; }
     }
 }

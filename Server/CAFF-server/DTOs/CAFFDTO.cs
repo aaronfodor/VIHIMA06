@@ -1,16 +1,17 @@
-﻿using System;
+﻿using CAFF_server.DTOs;
+using CAFF_server.Entities;
+using System;
 using System.Collections.Generic;
 
-namespace CAFF_server.Entities
+namespace CAFF_server.DTOs
 {
     public class CAFFDTO
     {
-        public string Name { get; set; }
-        public string UserId { get; set; }
-        public string Creator { get; set; }
-        public DateTime CreationTimestampUTC { get; set; }
-        public string Caption { get; set; }
+        public int Id { get; set; }
+        public string Uploader { get; set; }
+        public DateTime UploadTimestamp { get; set; }
+        public string OriginalFileName { get; set; }
+        public string StoredFileName { get; set; }
         public byte[] Preview { get; set; }
-        public ICollection<string> Tags { get; set; }
     }
 }
