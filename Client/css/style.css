@@ -314,66 +314,6 @@
         cursor: pointer;
     }
     
-    .footer {
-        width: 100%;
-        /*height: 20vw;*/
-        margin-top: -5vw;
-        z-index: 10;
-        bottom: 0;
-        position: absolute;
-    }
-    
-    .organizer_logo {
-        position: absolute;
-        bottom: 1vw;
-        left: 3vw;
-        width: auto;
-        z-index: 200;
-    }
-    
-    .organizer_logo img {
-        height: 4vw;
-    }
-    
-    .footer_menu {
-        position: absolute;
-        bottom: 0;
-        right: 3vw;
-        height: 2vw;
-        line-height: 2vw;
-        font-size: 0.6vw;
-        text-align: right;
-        width: auto;
-        color: #333;
-    }
-    
-    .footer_menu a {
-        color: #333;
-    }
-    
-    /*
-    #background-overlay {
-        height: 100%;
-        width: 100vw;
-        background-image: url(../images/bg.png);
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: top right;
-        position: absolute;
-        top: 0;
-        right: 0;
-    }*/
-    
-    .passcode {
-        background: transparent;
-        border: none;
-        border-bottom: 1px solid black;
-        width: 2.5vw;
-        text-align: center;
-        font-size: 1vw;
-        margin: calc(1vw - 2px);
-    }
-    
     .circle {
         width: 7vw;
         height: auto;
@@ -542,27 +482,6 @@
         padding-right: 2vw;
     }
     
-    #datepicker-container {
-        width: 100%;
-        text-align: center;
-        position: absolute;
-        margin: auto;
-        top: 30%;
-    }
-    
-    #datepicker-center {
-        display: inline-block;
-        margin: 0 auto;
-    }
-    
-    .input-err {
-        border-bottom: 2px solid red;
-    }
-    
-    .input-succ {
-        border-bottom: 2px solid green;
-    }
-    
     .linelist {
         margin-left: 1vw;
         margin-right: calc(1vw - 3px);
@@ -578,23 +497,6 @@
         cursor: pointer;
     }
     
-    .open {
-        border-bottom: none;
-    }
-    
-    .linelist-dropdown {
-        width: 80%;
-        margin: 0px 10%;
-        text-align: left;
-        font-size: 1vw;
-        line-height: 2.5vw;
-        height: auto;
-        position: relative;
-        background: #fff;
-        color: #000;
-        padding: 0px 1vw;
-        border-bottom: 1px solid #aaa;
-    }
     
     .linelist-title {
         margin-left: 1vw;
@@ -629,39 +531,7 @@
         width: 70%;
     }
     
-    .linelist-details {
-        width: 80%;
-        margin: 0px 10%;
-        text-align: left;
-        font-size: 1vw;
-        line-height: 2.5vw;
-        height: auto;
-        position: relative;
-        background: rgb(150, 149, 149);
-        color: #000;
-        padding: 0px 1vw;
-        border-bottom: 1px solid #aaa;
-    }
-    
-    .linelist button {
-        width: auto !important;
-        min-width: 5vw;
-        font-size: 1vw;
-        height: 1.5vw;
-        float: right;
-        margin: 0.5vw 1vw 0px 0px;
-    }
-    
-    .linelist input,
-    .linelist-title input {
-        width: auto !important;
-        min-width: 5vw;
-        font-size: 1vw;
-        height: 1.5vw;
-        float: right;
-        margin: 0.5vw 1vw 0px 0px;
-    }
-    
+
     .linelist img {
         width: auto !important;
         font-size: 1vw;
@@ -669,75 +539,7 @@
         float: right;
         margin: 0.5vw 1vw 0px 0px;
     }
-    
-    .linelist-li {
-        font-size: 1vw;
-        line-height: 2.5vw;
-        height: 2.5vw;
-        position: relative;
-        background: #fff;
-        color: #000;
-        padding: 0px 1vw;
-        border-bottom: 1px solid #aaa;
-        cursor: pointer;
-        width: auto;
-    }
-    
-    .linelist .checkmark,
-    .linelist-title .checkmark {
-        margin: 0.25vw 1vw 0px 0px;
-        width: 1.5vw;
-        height: 1.5vw;
-        float: right;
-        position: unset;
-    }
-    
-    .linelist .container,
-    .linelist-title .container {
-        line-height: 3vw;
-        display: block;
-        /* position: relative; */
-        /* padding-left: 35px; */
-        /* margin-bottom: 12px; */
-        cursor: pointer;
-        /* font-size: 22px; */
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        margin-bottom: 0vw;
-    }
-    
-    .linelist .checkmark,
-    .linelist-title .checkmark {
-        margin: 0.25vw 1vw 0px 0px;
-        width: 1.5vw;
-        height: 1.5vw;
-        /* float: right; */
-        /* position: unset; */
-    }
-    
-    .linelist .container .checkmark:after,
-    .linelist-title .container .checkmark:after {
-        /* left: 20px; */
-        float: left;
-        top: 2px;
-        margin-left: 0.4vw;
-        margin-top: 0.2vw;
-        width: 0.3vw;
-        height: 0.6vw;
-        border: solid #c8c8c8;
-        border-width: 0 0.35vw 0.35vw 0;
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
-        position: unset;
-    }
-    
-    .mrgray {
-        background: #dddddd;
-    }
-    
+
     .scroll-list {
         overflow-y: scroll;
         height: calc(100vh - 15vw);
@@ -764,18 +566,6 @@
         height: 30px;
         margin-top: 1vw;
     }
-    
-    .backBtn {
-        color: #AFABAB;
-        position: relative;
-        margin-top: 6vh;
-        float: right;
-        background: none;
-        /* padding: 0vw 0vw; */
-        font-size: 3.5vw;
-        margin-right: 20%;
-    }
-    /* The container */
     
     .container {
         line-height: 3vw;
@@ -892,8 +682,9 @@
     }
 
     #imgDetails {
-        width: 100%;
-        float: left;
+        width: 50%;
+        display: block;
+        margin: auto;
     }
 
     .row {

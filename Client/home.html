@@ -1,140 +1,16 @@
 <div id="header-content"></div>
 <script type="text/javascript" src="js/jquery-1.10.2.js"></script>
-<script> 
-    $(function(){
-      $("#header-content").load("header.html"); 
-    });
-    </script> 
-        <div class="content">
-
-
-<div>
-    <div class="rounded-square">
-        <img src="images/gallery.png">
-    </div>
-
-    <div class="search-bar">
-        <input id="search-input" placeholder="Search...">
-        <button class="search-button" onclick="searchUgyfel()"><img src="images/search_icon.png"></button>
-        <button onclick="window.location.href = 'upload.html';">NEW CAFF</button>
-
-    </div>
-
-
-</div>
-
-    <div id="caffs" class="scroll-list">
-
-
-    <!--
-    <div id="ugyfelek-menu" class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" />
-            </div>
-            <div class="card_title">CAFF1</div>
-        </div>
-    </div>
-    
-    <div id="rendelesek-menu" class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" style="margin-right: 1vw;"/>
-            </div>
-            <div class="card_title">CAFF2</div>
-        </div>
-    </div>
-    
-    <div id="kiszallitasok-menu" class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" />
-            </div>
-            <div class="card_title">CAFF3</div>
-        </div>
-    </div>
-    
-    <div class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" />
-            </div>
-            <div class="card_title">CAFF4</div>
-        </div>
-    </div>
-    
-    <div class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" />
-            </div>
-            <div class="card_title">CAFF5</div>
-        </div>
-    </div>
-    
-    <div class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" />
-            </div>
-            <div class="card_title">CAFF6</div>
-        </div>
-    </div>
-    
-    <div class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" />
-            </div>
-            <div class="card_title">CAFF7</div>
-        </div>
-    </div>
-    
-    <div class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" />
-            </div>
-            <div class="card_title">CAFF8</div>
-        </div>
-    </div>
-    
-    <div class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" />
-            </div>
-            <div class="card_title">CAFF9</div>
-        </div>
-    </div>
-    
-    <div class="contents_row_c">
-        <div class="contents_card">
-            <div>
-                <img class="card_img" src="images/mountains.jpg" alt="Preview kép" />
-            </div>
-            <div class="card_title">CAFF10</div>
-        </div>
-    </div>
-    
-    -->
-
-
-
-
-
-
-
-
-
-
-</div>
-
 <script type="text/javascript" src="js/connection.js"></script>
 
-<script type="text/javascript" src="js/home.js"></script>
 <script>
-
+    $(function () {
+        $("#header-content").load("header.html", function () {
+            $("#page").load("content/home-content.html");
+        });
+    });
 </script>
 
-        </body>
+<div id="page"></div>
+
+
+</body>

@@ -1,41 +1,43 @@
-$(function() {
+$(function () {
     getCaffs();
+    console.log(token)
+    console.log(user);
 });
 
-  function getCaffs() {
+function getCaffs() {
     $.ajax({
         type: "GET",
         url: url + "/caff/all",
         contentType: "application/json",
         beforeSend: function (xhr) {   //Include the bearer token in header
-            xhr.setRequestHeader("Authorization", 'Bearer '+ token);
+            xhr.setRequestHeader("Authorization", 'Bearer ' + token);
         },
         //data: data,
         timeout: 600000,
         processData: false,
-        success: function(data) {
+        success: function (data) {
             console.log(data);
 
             //data = sorting(data, 'name');
             //console.log(data);
+            $("#caffs").html("");
 
-            
-            $.each( data, function( key, caffFile ) {
+            $.each(data, function (key, caffFile) {
 
 
                 $.ajax({
                     type: "GET",
-                    url: "caff-element.html",
-                    success: function(line) {
+                    url: "content/caff-element.html",
+                    success: function (line) {
                         console.log(line);
-            
+
                         $("#caffs").append(line);
-                        var caff = $( ".contents_row_c" ).last();
-                        caff.find(".card_img").attr("src", "data:image/bmp;base64,"+ caffFile["preview"]);
+                        var caff = $(".contents_row_c").last();
+                        caff.find(".card_img").attr("src", "data:image/bmp;base64," + caffFile["preview"]);
                         caff.find(".card_title").html(caffFile["originalFileName"]);
 
                         caff.prop("id", caffFile["id"]);
-                        caff.attr("onclick", 'caffDetails("'+caffFile["id"]+ '")');
+                        caff.attr("onclick", 'caffDetails("' + caffFile["id"] + '")');
 
                         /*
                         console.log(user);
@@ -50,24 +52,81 @@ $(function() {
 */
 
                     },
-                    error: function(e) {
+                    error: function (e) {
                         console.log(e);
                         var result = JSON.parse(e.responseText);
-                        
+
                     }
-                });  
+                });
 
             });
 
         },
-        error: function(e) {
+        error: function (e) {
             console.log(e);
             var result = JSON.parse(e.responseText);
-            
+
         }
-    });     
-  }
+    });
+}
+
+
+function searchCaffs() {
+    var data = JSON.stringify($("#search-input").val());
+
+    $.ajax({
+        type: "POST",
+        url: url + "/caff/search",
+        contentType: "application/json",
+        beforeSend: function (xhr) {   //Include the bearer token in header
+            xhr.setRequestHeader("Authorization", 'Bearer ' + token);
+        },
+        data: data,
+        timeout: 600000,
+        processData: false,
+        success: function (data) {
+            console.log(data);
+
+            //data = sorting(data, 'name');
+            //console.log(data);
+
+            $("#caffs").html("");
+            $.each(data, function (key, caffFile) {
+
+
+                $.ajax({
+                    type: "GET",
+                    url: "content/caff-element.html",
+                    success: function (line) {
+                        console.log(line);
+
+                        $("#caffs").append(line);
+                        var caff = $(".contents_row_c").last();
+                        caff.find(".card_img").attr("src", "data:image/bmp;base64," + caffFile["preview"]);
+                        caff.find(".card_title").html(caffFile["originalFileName"]);
+
+                        caff.prop("id", caffFile["id"]);
+                        caff.attr("onclick", 'caffDetails("' + caffFile["id"] + '")');
+
+                    },
+                    error: function (e) {
+                        console.log(e);
+                        var result = JSON.parse(e.responseText);
+
+                    }
+                });
+
+            });
+
+        },
+        error: function (e) {
+            console.log(e);
+            var result = JSON.parse(e.responseText);
+
+        }
+    });
+}
 
 function caffDetails(caffId) {
-    window.location.href = "details.html?caff="+caffId;
+    window.location.href = "details.html?caff=" + caffId;
 }

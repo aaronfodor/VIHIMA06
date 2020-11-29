@@ -1,0 +1,41 @@
+<div class="content">
+
+
+
+    <div id="ugyfelek" class="scroll-list" style="height: calc(100vh - 8vw); margin-top: 1vw;">
+
+
+        <div class="row">
+            <div class="col">
+                <h1></h1><br>
+                <img id="imgDetails" src=""><br>
+
+
+                <button>DOWNLOAD</button> <br><br>
+                <button style="display:none" onclick="deleteCaff()" class="delCaff">DELETE</button>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="row">
+            <div class="col" id="comments" style="text-align: center;">
+                <h2>COMMENTS</h2><br><br>
+                <div class="search-bar">
+                    <input id="search-input" placeholder="" style="margin-left: auto; width: 36vw">
+                    <button onclick="addComment()" style="margin-right: auto; width: 10vw">COMMENT</button>
+
+                </div>
+                <div id="comments-list"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" src="js/connection.js"></script>
+
+<script type="text/javascript" src="js/details.js"></script>
