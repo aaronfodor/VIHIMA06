@@ -54,12 +54,12 @@ namespace CAFF_server.Controllers
         }
 
         [HttpPost("{caffid}")]
-        public IActionResult AddComment([FromBody] CommentDTO commentDTO, int caffid)
+        public IActionResult AddComment([FromBody] string text, int caffid)
         {
             string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
-                var com = _commentService.AddComment(_mapper.Map<Comment>(commentDTO), caffid, userid);
+                var com = _commentService.AddComment(text, caffid, userid);
                 if (com == null)
                 {
                     _loggerService.Error("Comment could not be added", userid);

@@ -26,7 +26,6 @@ namespace CAFF_server
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -38,13 +37,12 @@ namespace CAFF_server
             services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = false;
-                //RequireConfirmedAccount/Email
             }).AddEntityFrameworkStores<DataContext>();
 
             services.Configure<IdentityOptions>(options =>
             {
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireDigit = false;
             });
@@ -91,7 +89,6 @@ namespace CAFF_server
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
 

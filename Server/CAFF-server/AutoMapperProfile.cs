@@ -17,7 +17,7 @@ namespace CAFF_server
                 .ForMember(d => d.Id, s => s.Ignore());
             CreateMap<CAFF, CAFFDTO>();
             CreateMap<Comment, CommentDTO>()
-                .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.User.UserName));
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.User.Name));
             CreateMap<CommentDTO, Comment>();
         }
     }

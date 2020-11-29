@@ -9,7 +9,7 @@ namespace CAFF_server.Services
 {
     public interface ICommentService
     {
-        Comment AddComment(Comment comment, int caffid, string userid);
+        Comment AddComment(string text, int caffid, string userid);
         IEnumerable<Comment> GetAllComment(int id);
         void DeleteComment(int id);
     }
@@ -22,14 +22,21 @@ namespace CAFF_server.Services
             _context = context;
         }
 
-        public Comment AddComment(Comment comment, int caffid, string userid)
+        public Comment AddComment(string text, int caffid, string userid)
         {
-            comment.CAFF = _context.CAFFs.Find(caffid);
-            comment.User = _context.User.Find(userid);
-            comment.Timestamp = DateTime.Now;
-            _context.Comments.Add(comment);
-            _context.SaveChanges();
-            return comment;
+            if (caffid != 0 && userid != null && text != null)
+            {
+                var comment = new Comment();
+                comment.CAFF = _context.CAFFs.Find(caffid);
+                comment.User = _context.User.Find(userid);
+                comment.Timestamp = DateTime.Now;
+                comment.Text = text;
+                _context.Comments.Add(comment);
+                _context.SaveChanges();
+                return comment;
+            }
+            else
+            return null;
         }
 
         public void DeleteComment(int id)
@@ -41,7 +48,7 @@ namespace CAFF_server.Services
 
         public IEnumerable<Comment> GetAllComment(int id)
         {
-            return _context.Comments.Include(x => x.CAFF).Include(x => x.User).Where(x => !x.Deleted && x.CAFF.Id == id);
+            return _context.Comments.Include(x => x.CAFF).Include(x => x.User).Where(x => !x.Deleted && x.CAFF.Id == id).OrderByDescending(x => x.Id);
         }
 
     }

@@ -63,7 +63,7 @@ namespace CAFF_server.Controllers
             }
         }
 
-        [HttpGet("search")]
+        [HttpPost("search")]
         public IActionResult GetCaffSearch([FromBody] string filename)
         {
             string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -126,7 +126,7 @@ namespace CAFF_server.Controllers
         }
 
         [HttpGet("{id}/download")]
-        public IActionResult DownloadCaff(int id)
+        public FileResult DownloadCaff(int id)
         {
             string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
@@ -135,45 +135,52 @@ namespace CAFF_server.Controllers
                 if (caff == null)
                 {
                     _loggerService.Error("No caff found", userid);
-                    return NotFound();
+                    return null;
                 }
                 else
                 {
                     var path = Path.Combine(_config["StoredFilesPath"], caff.StoredFileName + ".caff");
                     byte[] fileBytes = System.IO.File.ReadAllBytes(path);
-                    var file = File(fileBytes, "multipart/encrypted", caff.OriginalFileName);
-
+                    var file = File(fileBytes, "application/octet-stream", caff.OriginalFileName);
                     _loggerService.Info("File downloaded", userid);
-                    return Ok(file);
+                    return file;
                 }
             }
             catch (Exception ex)
             {
                 _loggerService.Debug(ex.Message, userid);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return null;
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCaff([FromForm] FormModel file)
+        public async Task<IActionResult> AddCaff([FromForm] List<IFormFile> files)
         {
             string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             try
             {
-                if (file.File == null || !(file.File.Length > 0)) return BadRequest();
+                if (files.Count == 0) return BadRequest();
                 else
                 {
-                    var storedname = Path.GetRandomFileName();
-                    var filePath = Path.Combine(_config["StoredFilesPath"], storedname.Substring(0, storedname.Length-4) + ".caff");
-                    
-                    using (var stream = System.IO.File.Create(filePath))
+                    var resultCode = 0;
+                    foreach (IFormFile file in files)
                     {
-                        await file.File.CopyToAsync(stream);
-                    }
 
-                    var resultCode = _caffService.AddCaff(Path.GetFullPath(filePath), file.File.FileName, userid);
-                    if (resultCode == 0) { _loggerService.Info("Caff file saved", userid); return Ok(); }
-                    else if (resultCode == 2) { _loggerService.Error("Hiba a CAFF fájl megnyitása közben", userid); return StatusCode(StatusCodes.Status500InternalServerError); }
+                        if (Path.GetExtension(file.FileName) == ".caff" && file.Length < _config.GetValue<long>("FileSizeLimit"))
+                        {
+                            var storedname = Path.GetRandomFileName();
+                            var filePath = Path.Combine(_config["StoredFilesPath"], storedname.Substring(0, storedname.Length - 4) + ".caff");
+
+                            using (var stream = System.IO.File.Create(filePath))
+                            {
+                                await file.CopyToAsync(stream);
+                            }
+                            var newResultCode = _caffService.AddCaff(Path.GetFullPath(filePath), file.FileName, userid);
+                            if (resultCode < newResultCode) resultCode = newResultCode;
+                        }
+                    }
+                    if (resultCode == 0) { _loggerService.Info("Caff files saved", userid); return Ok(); }
+                    else if (resultCode == 2) { _loggerService.Error("Hiba egy CAFF fájl megnyitása közben", userid); return StatusCode(StatusCodes.Status500InternalServerError); }
                     else { _loggerService.Error("Hiba parsolás közben: hibás fájl", userid); return BadRequest("Hiba parsolás közben: hibás fájl"); }
                 }
             }
