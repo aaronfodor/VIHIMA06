@@ -1,7 +1,5 @@
 $(function () {
     getCaffs();
-    console.log(token)
-    console.log(user);
 });
 
 function getCaffs() {
@@ -16,7 +14,6 @@ function getCaffs() {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
 
             //data = sorting(data, 'name');
             //console.log(data);
@@ -29,7 +26,6 @@ function getCaffs() {
                     type: "GET",
                     url: "content/caff-element.html",
                     success: function (line) {
-                        console.log(line);
 
                         $("#caffs").append(line);
                         var caff = $(".contents_row_c").last();

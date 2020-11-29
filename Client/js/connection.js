@@ -1,6 +1,5 @@
 
 var token = getCookie("token")
-console.log(token);
 if (token.length < 2) {
   window.location = "index.html";
 }

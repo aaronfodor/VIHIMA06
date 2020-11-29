@@ -14,7 +14,6 @@ $.ajax({
     timeout: 600000,
     processData: false,
     success: function (data) {
-        console.log(data);
         user = data;
         $("#user-name").html(data["name"]);
 
@@ -42,7 +41,6 @@ function logout() {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
             document.cookie = "token=" + "-";
             window.location = "index.html"
         },

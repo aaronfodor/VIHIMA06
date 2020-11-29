@@ -213,7 +213,6 @@ function sorting(json_object, key_to_sort_by) {
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     }
 
-    console.log(json_object.sort(sortByKey));
     var obj = json_object.sort(sortByKey);
     return obj;
 }

@@ -49,7 +49,6 @@ function getCaff() {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
             $("#imgDetails").attr("src", "data:image/bmp;base64," + data["preview"]);
             $("h1").html(data["originalFileName"]);
 
@@ -76,7 +75,6 @@ function deleteCaff() {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
             window.location = "home.html";
         },
         error: function (e) {
@@ -99,7 +97,6 @@ function getComments() {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
             //$("#imgDetails").attr("src", "data:image/bmp;base64,"+ data["preview"]);
             $("#comments-list").html("");
 
@@ -110,9 +107,7 @@ function getComments() {
                     type: "GET",
                     url: "content/details-comment.html",
                     success: function (line) {
-                        console.log(line);
 
-                        console.log(commentRow["id"]);
                         $("#comments-list").append(line);
                         var comment = $(".comment").last();
                         comment.find(".name-date").html("<b>" + commentRow["name"] + " - " + commentRow["timestamp"].slice(0, 10) + "</b>");
@@ -152,7 +147,6 @@ function addComment() {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
             //$("#imgDetails").attr("src", "data:image/bmp;base64,"+ data["preview"]);
             $("#search-input").val("");
 
@@ -169,7 +163,6 @@ function addComment() {
 
 
 function deleteComment(commentId) {
-    console.log("del");
     $.ajax({
         type: "DELETE",
         url: url + "/comment/" + commentId,
@@ -181,7 +174,6 @@ function deleteComment(commentId) {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
             //$("#imgDetails").attr("src", "data:image/bmp;base64,"+ data["preview"]);
             $("#search-input").val("");
 
@@ -197,7 +189,6 @@ function deleteComment(commentId) {
 }
 
 function downloadCaff(caffId) {
-    console.log("download");
     $.ajax({
         type: "GET",
         url: url + "/caff/" + caffId + "/download",
@@ -209,7 +200,6 @@ function downloadCaff(caffId) {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
             download(data, "ize.caff", 'application/octet-stream');
         },
         error: function (e) {

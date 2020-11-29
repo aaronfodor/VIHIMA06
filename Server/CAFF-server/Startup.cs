@@ -82,9 +82,7 @@ namespace CAFF_server
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder.AllowAnyOrigin()
-                                      .AllowAnyHeader()
-                                      .AllowAnyMethod();
+                                      builder.WithOrigins("http://localhost:8080", "https://localhost:8080").AllowAnyHeader();
                                   });
             });
         }

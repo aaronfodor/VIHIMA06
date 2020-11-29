@@ -72,7 +72,7 @@ function register() {
         if (validatePassword($("#register_password").val())) {
             if ($("#register_password").val() == $("#register_password2").val()) {
                 var data = JSON.stringify({ userName: $("#register_username").val(), password: $("#register_password").val(), name: $("#register_name").val(), email: $("#register_email").val() });
-                console.log(data);
+                
                 $.ajax({
                     type: "POST",
                     url: url + "/user/register",
@@ -84,7 +84,7 @@ function register() {
                     timeout: 600000,
                     processData: false,
                     success: function (data) {
-                        console.log(data);
+                        
                         window.location = "index.html";
                     },
                     error: function (e) {

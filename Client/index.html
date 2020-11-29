@@ -58,11 +58,10 @@
 
 <script>
 
-    console.log(url);
     function login() {
         //window.location.href = "home.html";
         var data = JSON.stringify({ userName: $("#login_username").val(), password: $("#login_password").val() });
-        console.log(data);
+        
         $.ajax({
             type: "POST",
             url: url + "/user/login",
@@ -71,12 +70,12 @@
             timeout: 600000,
             processData: false,
             success: function (data) {
-                console.log(data);
+                
 
                 token = data["token"];
-                console.log(token);
+                
                 document.cookie = "token=" + token;
-                console.log(getCookie("token"))
+                
 
                 window.location = "home.html";
             },

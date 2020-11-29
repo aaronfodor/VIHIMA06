@@ -28,9 +28,7 @@ function getProfile() {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
             user = data;
-            console.log(user);
             $("#profile_email").val(user["email"]);
             $("#profile_name").val(user["name"]);
             $("#profile_username").val(user["userName"]);
@@ -47,7 +45,6 @@ function getProfile() {
 function editProfile() {
     var data = JSON.stringify({ userName: $("#profile_username").val(), email: $("#profile_email").val(), name: $("#profile_name").val() });
 
-    console.log(data);
 
 
     $.ajax({
@@ -61,7 +58,6 @@ function editProfile() {
         timeout: 600000,
         processData: false,
         success: function (data) {
-            console.log(data);
             alert("Profile saved!");
         },
         error: function (e) {
@@ -77,7 +73,6 @@ function editPassword() {
         if ($("#password1").val() == $("#password2").val()) {
             var data = JSON.stringify({ oldpassword: $("#password_old").val(), newpassword: $("#password1").val() });
 
-            console.log(data);
 
 
             $.ajax({
@@ -91,7 +86,6 @@ function editPassword() {
                 timeout: 600000,
                 processData: false,
                 success: function (data) {
-                    console.log(data);
                     alert("Password changed.");
                 },
                 error: function (e) {
@@ -115,7 +109,6 @@ function editPassword() {
 }
 
 function validatePassword(password) {
-    console.log(password)
     var regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
     return password.match(regex);
 }
