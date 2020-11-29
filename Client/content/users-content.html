@@ -1,0 +1,73 @@
+<div class="content">
+
+    <div>
+        <div class="rounded-square">
+            <img src="images/users_icon.png">
+        </div>
+
+        <div class="search-bar">
+            <input id="search-input" placeholder="Adja meg a keresni kívánt NEVET, TAJ SZÁMOT vagy AZONOSÍTÓT">
+            <button class="search-button" onclick="searchUsers()" style="right: 0"><img
+                    src="images/search_icon.png"></button>
+        </div>
+
+
+    </div>
+
+    <div class="linelist-title">
+        <span style="position: absolute; left: 4vw;">NAME</span>
+        <span style="position: absolute; left: 20vw;">USERNAME</span>
+        <span style="position: absolute; left: 40vw;">EMAIL</span>
+        <span style="position: absolute; left: 65vw;">ROLE</span>
+
+        <span style="float: right; width: 8.5vw; text-align: center;">MŰVELETEK</span>
+
+    </div>
+    <div id="users" class="scroll-list" style="height: calc(100vh - 22vw);">
+
+    </div>
+
+
+
+</div>
+
+<div id="delModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close" onclick="$('#delModal').hide();">&times;</span>
+        <p>BAN</p>
+        <button onclick="$('#delModal').hide();">CANCEL</button>
+        <button onclick="del()">BAN</button>
+
+    </div>
+</div>
+
+
+<div id="editModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close" onclick="$('#editModal').hide();">&times;</span>
+        <p>PERMISSIONS</p>
+        <label class="container">
+            <input id="radioAdmin" name="role" type="radio">
+            <span class="checkmark"></span>
+            <span class="title">Admin</span>
+        </label>
+        <label class="container">
+            <input id="radioUser" name="role" type="radio">
+            <span class="checkmark"></span>
+            <span class="title">User</span>
+        </label>
+        <button onclick="$('#editModal').hide();">CANCEL</button>
+        <button onclick="edit()">SAVE</button>
+
+    </div>
+</div>
+
+
+
+<script type="text/javascript" src="js/connection.js"></script>
+
+<script type="text/javascript" src="js/users.js"></script>

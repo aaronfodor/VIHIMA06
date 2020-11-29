@@ -1,0 +1,14 @@
+<div id="header-content"></div>
+<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+<script>
+  $(function () {
+    $("#header-content").load("header.html", function () {
+      $("#page").load("content/upload-content.html");
+    });
+  });
+</script>
+
+<div id="page"></div>
+
+
+</body>
